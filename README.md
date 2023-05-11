@@ -15,6 +15,12 @@ binoc is a JavaScript library for technical analysis on the [Binance][binance] e
 [rest]: https://docs.binance.us/#get-candlestick-data
 [ws]: https://docs.binance.us/#candlestick-data-stream
 
+## Installation
+
+```sh
+npm install binoc
+```
+
 ## Usage
 
 ```js
