@@ -42,13 +42,13 @@ export default class Source {
     this.spot = new Spot(apiKey || "", apiSecret || "", {
       baseURL: spotURL || API.spot,
     })
-    this.wsURL = wsURL
+    this.wsURL = wsURL || API.ws
     this.websockets = {}
   }
 
   subscribe(symbol, interval, callback) {
     const ws = new WebsocketStream({
-      wsURL: this.wsURL || API.ws,
+      wsURL: this.wsURL,
       callbacks: {
         message: (data) => {
           data = JSON.parse(data)
