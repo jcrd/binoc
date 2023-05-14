@@ -47,26 +47,47 @@ export default class Source {
   }
 
   subscribe(symbol, interval, callback) {
+    const name = symbol + interval
+    if (name in this.websockets) {
+      this.websockets[name].callbacks.push(callback)
+      return
+    }
+
     const ws = new WebsocketStream({
       wsURL: this.wsURL,
       callbacks: {
         message: (data) => {
           data = JSON.parse(data)
-          if (data.k.x) {
-            callback({
+          if (!data.k.x) {
+            return
+          }
+          this.websockets[name].callbacks.forEach((cb) =>
+            cb({
               timestamp: data.k.t,
               open: parseFloat(data.k.o),
               high: parseFloat(data.k.h),
               low: parseFloat(data.k.l),
               close: parseFloat(data.k.c),
             })
-          }
+          )
         },
       },
     })
 
-    this.websockets[interval] = ws
+    this.websockets[name] = { websocket: ws, callbacks: [callback] }
     ws.kline(symbol, interval)
+  }
+
+  unsubscribe(symbol, interval, callback) {
+    const name = symbol + interval
+    const ws = this.websockets[name]
+    if (name in this.websockets) {
+      ws.callbacks = ws.callbacks.filter((cb) => cb !== callback)
+      if (ws.callbacks.length === 0) {
+        ws.websocket.disconnect()
+        delete this.websocket[name]
+      }
+    }
   }
 
   async getKlines(symbol, interval, args = {}) {
@@ -127,8 +148,9 @@ export default class Source {
   }
 
   disconnect() {
-    for (const i in this.websockets) {
-      this.websockets[i].disconnect()
+    for (const name in this.websockets) {
+      this.websockets[name].websocket.disconnect()
     }
+    this.websockets = {}
   }
 }
