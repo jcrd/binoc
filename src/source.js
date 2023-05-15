@@ -26,13 +26,23 @@ function parseInterval(interval) {
   return Number(i) * intervalSeconds[s]
 }
 
-function parseKline(k) {
+function parseRestKline(k) {
   return {
     timestamp: Number(k[0]),
     open: parseFloat(k[1]),
     high: parseFloat(k[2]),
     low: parseFloat(k[3]),
     close: parseFloat(k[4]),
+  }
+}
+
+function parseWsKline(k) {
+  return {
+    timestamp: k.t,
+    open: parseFloat(k.o),
+    high: parseFloat(k.h),
+    low: parseFloat(k.l),
+    close: parseFloat(k.c),
   }
 }
 
@@ -52,6 +62,7 @@ export default class Source {
       this.websockets[name].callbacks.push(callback)
       return
     }
+    let momentValue
 
     const ws = new WebsocketStream({
       wsURL: this.wsURL,
@@ -59,16 +70,11 @@ export default class Source {
         message: (data) => {
           data = JSON.parse(data)
           if (!data.k.x) {
+            momentValue = parseWsKline(data.k)
             return
           }
           this.websockets[name].callbacks.forEach((cb) =>
-            cb({
-              timestamp: data.k.t,
-              open: parseFloat(data.k.o),
-              high: parseFloat(data.k.h),
-              low: parseFloat(data.k.l),
-              close: parseFloat(data.k.c),
-            })
+            cb(parseWsKline(data.k))
           )
         },
       },
@@ -76,6 +82,8 @@ export default class Source {
 
     this.websockets[name] = { websocket: ws, callbacks: [callback] }
     ws.kline(symbol, interval)
+
+    return () => momentValue
   }
 
   unsubscribe(symbol, interval, callback) {
@@ -97,9 +105,9 @@ export default class Source {
     }
     const data = (await this.spot.klines(symbol, interval, args)).data
     if (args.limit === 1) {
-      return parseKline(data[0])
+      return parseRestKline(data[0])
     }
-    return data.map((d) => parseKline(d))
+    return data.map((d) => parseRestKline(d))
   }
 
   async getRecentTimestamp(symbol, interval) {
@@ -142,7 +150,7 @@ export default class Source {
       lastEndTime = lines[lines.length - 1][0]
 
       for (const k of lines) {
-        yield parseKline(k)
+        yield parseRestKline(k)
       }
     }
   }
