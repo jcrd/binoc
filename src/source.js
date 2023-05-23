@@ -29,7 +29,7 @@ function parseInterval(interval) {
   return Number(i) * intervalSeconds[s]
 }
 
-function parseRestKline(k) {
+export function parseKlineArray(k) {
   return {
     timestamp: Number(k[0]),
     open: parseFloat(k[1]),
@@ -108,9 +108,9 @@ export class Source {
     }
     const data = (await this.spot.klines(symbol, interval, args)).data
     if (args.limit === 1) {
-      return parseRestKline(data[0])
+      return parseKlineArray(data[0])
     }
-    return data.map((d) => parseRestKline(d))
+    return data.map((d) => parseKlineArray(d))
   }
 
   async getRecentTimestamp(symbol, interval) {
@@ -153,7 +153,7 @@ export class Source {
       lastEndTime = lines[lines.length - 1][0]
 
       for (const k of lines) {
-        yield parseRestKline(k)
+        yield parseKlineArray(k)
       }
     }
   }
