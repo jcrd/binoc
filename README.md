@@ -24,7 +24,7 @@ npm install binoc
 ## Usage
 
 ```js
-import Strategy from "binoc"
+import { Strategy } from "binoc"
 import { SMA, WMA } from "@debut/indicators"
 
 // Define a strategy.
