@@ -20,7 +20,7 @@ const intervalSeconds = {
   M: 60 * 60 * 24 * 30,
 }
 
-function parseInterval(interval) {
+export function parseIntervalSeconds(interval) {
   const m = intervalRe.exec(interval)
   if (m === null) {
     return undefined
@@ -120,7 +120,7 @@ export class Source {
   async *klines({ symbol, interval, limit, endTime }) {
     endTime = endTime || (await this.getRecentTimestamp(symbol, interval))
 
-    const seconds = parseInterval(interval)
+    const seconds = parseIntervalSeconds(interval)
     const iters = Math.ceil(limit / maxKlineLimit)
     let lastEndTime = 0
 
