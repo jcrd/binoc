@@ -1,5 +1,8 @@
 import { Spot, WebsocketStream } from "@binance/connector"
 
+// Programmatic access to kline object structure.
+export const KlineKeys = ["timestamp", "open", "high", "low", "close"]
+
 const API = {
   spot: "https://api.binance.us",
   ws: "wss://stream.binance.us:9443",
