@@ -1,6 +1,6 @@
 import assert from "assert"
 
-import Source from "../src/source.js"
+import { Source } from "../src/source.js"
 
 describe("Source", () => {
   const source = new Source()

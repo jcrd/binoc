@@ -1,2 +1,2 @@
-export { default as Source } from "./source.js"
-export { default as Strategy } from "./strategy.js"
+export { Source } from "./source.js"
+export { Strategy } from "./strategy.js"

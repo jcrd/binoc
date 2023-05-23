@@ -1,6 +1,6 @@
-import Source from "./source.js"
+import { Source } from "./source.js"
 
-export default class Strategy {
+export class Strategy {
   constructor(args) {
     const { symbol, indicators, reducer, sourceArgs } = {
       reducer: (states) =>

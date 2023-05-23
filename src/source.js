@@ -46,7 +46,7 @@ function parseWsKline(k) {
   }
 }
 
-export default class Source {
+export class Source {
   constructor(args = {}) {
     const { apiKey, apiSecret, spotURL, wsURL } = args
     this.spot = new Spot(apiKey || "", apiSecret || "", {

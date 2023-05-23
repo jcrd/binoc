@@ -2,7 +2,7 @@ import assert from "assert"
 
 import { SMA, WMA } from "@debut/indicators"
 
-import Strategy from "../src/strategy.js"
+import { Strategy } from "../src/strategy.js"
 
 describe("Strategy", () => {
   describe("backtest", () => {
